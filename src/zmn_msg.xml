@@ -1,0 +1,111 @@
+<class
+    name = "zmn_msg"
+    signature = "1"
+    title = "Basic messaging for zmon.it"
+    script = "zproto_codec_c"
+    package_dir = "../include"
+    source_dir = "."
+    export_header = "zmnmsg.h"
+    >
+
+<include filename = "../license.xml" />
+
+<!-- each message can be extended, put things to hash -->
+<header>
+    <field name = "time" type = "number" size = "8">
+        Time when message was generated
+    </field>
+    <field name = "ttl" type = "number" size = "4">
+        Time to live, after $current time > time - ttl, message is droped
+    </field>
+    <field name = "ext" type = "hash" >
+        Additional extended informations for the message
+    </field>
+</header>
+
+<message
+    name = "METRIC"
+    id = "1"
+    >
+
+    <!-- MVY: dropped from the system, those are part of message subject!!
+    <field name = "type" type = "string">
+        Metric name, e.g.: "temperature", "humidity", "power.load", ...
+    </field>
+
+    <field name = "name" type = "string">
+        Name of asset where metric is produced.
+    </field>
+    -->
+
+    <!-- MVY: consideration - for the faster processing, should not we have more messages?
+         string-metric
+         int-metric
+         float-metric
+    -->
+    <field name = "value" type = "string">
+        Metric value, e.g.: "25.323" or "900".
+    </field>
+
+    <!-- MVY: dropped, this is why ext is for.
+    <field name = "unit" type = "string">
+        Metric unit, e.g.: "C" or "F" for temperature.
+    </field>
+    -->
+</message>
+
+<message
+    name = "ALERT"
+    id = "2"
+    >
+
+    <!-- MVY: dropped as this is in message subject
+    <field name = "rule" type = "string">
+        Name of the rule which triggers this alert.
+    </field>
+
+    <field name = "name" type = "string">
+        Name of asset where alert is trigged.
+    </field>
+    -->
+
+    <!-- MVY: state exists only in alert-list component, normally you generate alert or not -->
+    <field name = "state" type = "string">
+        Alert state.
+
+        Permissible values:
+        ACTIVE / ACK-WIP / ACK-IGNORE / ACK-PAUSE / ACK-SILENCE / RESOLVED
+    </field>
+
+    <field name = "severity" type = "string">
+        Alert severity.
+
+        Permissible values:
+        INFO / WARNING / CRITICAL
+    </field>
+
+    <field name = "description" type = "string">
+        Alert description.
+    </field>
+
+
+    <!-- MVY: dropped, actions shall be solved as part of asset message
+    <field name = "action" type = "string">
+        List of slash-separated ('/') actions, e.g.: "EMAIL/SMS".
+        Can be empty.
+    </field>
+    -->
+</message>
+
+<message
+    name = "DEVICE"
+    id = "3">
+
+    <!-- MVY: how about uuid?? -->
+    <field name = "id" type = "string">
+        Device unique id
+    </field>
+
+</message>
+
+</class>
