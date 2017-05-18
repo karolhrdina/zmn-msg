@@ -1,11 +1,11 @@
 <class
-    name = "zmn_msg"
+    name = "zmn_proto"
     signature = "1"
     title = "Basic messaging for zmon.it"
     script = "zproto_codec_c"
     package_dir = "../include"
     source_dir = "."
-    export_header = "zmnmsg.h"
+    export_header = "zmproto.h"
     >
 
 <include filename = "../license.xml" />
