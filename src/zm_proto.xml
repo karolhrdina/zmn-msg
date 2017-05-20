@@ -28,15 +28,14 @@
     id = "1"
     >
 
-    <!-- MVY: dropped from the system, those are part of message subject!!
+    <!-- THA: IMO message should contain all necessary information, even if it is in topic too -->
     <field name = "type" type = "string">
         Metric name, e.g.: "temperature", "humidity", "power.load", ...
     </field>
 
-    <field name = "name" type = "string">
-        Name of asset where metric is produced.
+    <field name = "device" type = "string">
+        Name of device where metric is produced.
     </field>
-    -->
 
     <!-- MVY: consideration - for the faster processing, should not we have more messages?
          string-metric
@@ -48,6 +47,7 @@
     </field>
 
     <!-- MVY: dropped, this is why ext is for.
+         THA: yes, let's drop this
     <field name = "unit" type = "string">
         Metric unit, e.g.: "C" or "F" for temperature.
     </field>
@@ -60,6 +60,9 @@
     >
 
     <!-- MVY: dropped as this is in message subject
+         THA: the same as for metric, should be in message
+              but maybe we can use the same naming type@device
+              load@server.cz (is too high)
     <field name = "rule" type = "string">
         Name of the rule which triggers this alert.
     </field>
@@ -70,6 +73,7 @@
     -->
 
     <!-- MVY: state exists only in alert-list component, normally you generate alert or not -->
+    <!-- THA: alert with RESOLVED state is generated to inform imediatelly that broblem is gone -->
     <field name = "state" type = "string">
         Alert state.
 
@@ -90,6 +94,7 @@
 
 
     <!-- MVY: dropped, actions shall be solved as part of asset message
+         THA: yes, let's drop this
     <field name = "action" type = "string">
         List of slash-separated ('/') actions, e.g.: "EMAIL/SMS".
         Can be empty.
@@ -101,7 +106,9 @@
     name = "DEVICE"
     id = "3">
 
-    <!-- MVY: how about uuid?? -->
+    <!-- MVY: how about uuid??
+         THA: Not sure about uuid
+     -->
     <field name = "id" type = "string">
         Device unique id
     </field>
