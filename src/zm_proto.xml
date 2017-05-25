@@ -21,6 +21,10 @@
     <field name = "ext" type = "hash" >
         Additional extended informations for the message
     </field>
+    <field name = "device" type = "uuid">
+        Device universal unique identifier
+    </field>
+
 </header>
 
 <message
@@ -29,18 +33,19 @@
     >
 
     <!-- THA: IMO message should contain all necessary information, even if it is in topic too -->
+    <!-- KHR: Agreed. -->
     <field name = "type" type = "string">
         Metric name, e.g.: "temperature", "humidity", "power.load", ...
-    </field>
-
-    <field name = "device" type = "string">
-        Name of device where metric is produced.
     </field>
 
     <!-- MVY: consideration - for the faster processing, should not we have more messages?
          string-metric
          int-metric
          float-metric
+
+         KHR: IMHO this is not a good idea.
+              String is universal serialization format. (quoting Hintjens)
+              Besides, how many more type systems would you like to invent? ;)
     -->
     <field name = "value" type = "string">
         Metric value, e.g.: "25.323" or "900".
@@ -48,10 +53,15 @@
 
     <!-- MVY: dropped, this is why ext is for.
          THA: yes, let's drop this
-    <field name = "unit" type = "string">
-        Metric unit, e.g.: "C" or "F" for temperature.
-    </field>
+         KHR: I disagree.
+              If we had field 'type' containing information like temperature_C or temperature_K etc... then ok, 
+              but we don't and therefore unit is integral part of the message.
+              Moving this to ext only replaces fnction `zm_proto_unit` with `zm_proto_ext_string`
+              On top of that we need to deal with unit prefixes defined by SI (k, M, ....) and therefore filling this should be mandatory.
     -->
+    <field name = "unit" type = "string">
+        Metric unit, e.g.: "C" or "F" for temperature, "W" or "kW" for realpower etc... 
+    </field>
 </message>
 
 <message
@@ -63,43 +73,34 @@
          THA: the same as for metric, should be in message
               but maybe we can use the same naming type@device
               load@server.cz (is too high)
-    <field name = "rule" type = "string">
-        Name of the rule which triggers this alert.
-    </field>
-
-    <field name = "name" type = "string">
-        Name of asset where alert is trigged.
-    </field>
+         KHR: I am also for keeping this (for several reasons, one of them already listed by THA).
+              Prepared to argue on demand  :). 
     -->
+    <field name = "rule" type = "string">
+        Identifier of the rule which triggers this alert.
+    </field>
 
     <!-- MVY: state exists only in alert-list component, normally you generate alert or not -->
     <!-- THA: alert with RESOLVED state is generated to inform imediatelly that broblem is gone -->
-    <field name = "state" type = "string">
-        Alert state.
+    <!-- KHR: You are both right. 
+              This field is IMHO boolean - Active/Resolved. 
 
-        Permissible values:
-        ACTIVE / ACK-WIP / ACK-IGNORE / ACK-PAUSE / ACK-SILENCE / RESOLVED
+              Alternative would be to have a separate resolve alert message.
+
+              Also i totally agree with completely dropping the various ACK states.
+    --> 
+    <field name = "state" type = "number" size = "1">
+        Alert is active (value 1) or resolved (value 0).
     </field>
 
-    <field name = "severity" type = "string">
-        Alert severity.
-
-        Permissible values:
-        INFO / WARNING / CRITICAL
+    <!-- KHR: this is IMHO boolean - critical or not... -->
+    <field name = "severity" type = "number" size = "1">
+        Alert is critical (value 1) or not (value 0).
     </field>
 
     <field name = "description" type = "string">
         Alert description.
     </field>
-
-
-    <!-- MVY: dropped, actions shall be solved as part of asset message
-         THA: yes, let's drop this
-    <field name = "action" type = "string">
-        List of slash-separated ('/') actions, e.g.: "EMAIL/SMS".
-        Can be empty.
-    </field>
-    -->
 </message>
 
 <message
@@ -108,10 +109,9 @@
 
     <!-- MVY: how about uuid??
          THA: Not sure about uuid
-     -->
-    <field name = "id" type = "string">
-        Device unique id
-    </field>
+         KHR: Let's try it :)
+    -->
+    <!-- KHR: Also, i renamed 'id' to 'device' and thus was able to moved the field to header -->
 
 </message>
 
